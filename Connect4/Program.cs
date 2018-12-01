@@ -14,56 +14,74 @@ namespace Connect4
             int[,] connect4 = new int[6, 7] { {0,0,0,0,0,0,0 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0 } };
 
             bool keepPlaying = true;
-            int order = 1;
+            int order = 1; //blue = 2, red = 1
 
             Console.WriteLine("Initial state..");
             PrintMatrix(connect4);
 
-            int chipType = 1;
+            bool skip = false;
 
             while(keepPlaying)
             {
                 Console.WriteLine("");
                 Console.WriteLine("");
 
-                if (order == 1)
-                {
-                    Console.WriteLine("Drop blue chip to column?");
-                    order++;
-                }
-                else
-                {
-                    Console.WriteLine("Drop red chip to column?");
-                    order--;
-                }
+                
+                Console.WriteLine("Drop {0} chip to column?", order == 1? "red" : "blue");
+
 
                 int column = int.Parse(Console.ReadLine());
 
-                PopulateColumn(ref connect4, column, order);
-
-                chipType++;
-
-                if(chipType % 5 == 0)
+                if(PopulateColumn(ref connect4, column, order))
                 {
-                    PrintMatrix(connect4);
+                    Console.WriteLine(string.Format("\t{1} chip added to column {0}", column, order == 1? "RED" : "BLUE"));
+                    Console.WriteLine(string.Format(""));
+
+                    order = SwitchTurn(order);
+                }
+                else
+                {
+                    Console.WriteLine(string.Format("\tSorry, column {0} is full?", column ));
 
                 }
+
+                PrintMatrix(connect4);
             }
 
             Console.Read();
 
         }
 
-        private static void PopulateColumn(ref int [,] matrix, int columNumber, int chip)
+        private static int SwitchTurn(int turn)
         {
+            if (turn == 1)
+            {
+                turn++;
+            }
+            else
+            {
+                turn--;
+            }
+
+            return turn;
+        }
+
+
+        private static bool PopulateColumn(ref int [,] matrix, int columNumber, int chip)
+        {
+            bool success = false;
+
             for (int i = 5; i >= 0; i--)
             {
                 if(matrix[i, columNumber - 1] == 0)
                 {
                     matrix[i, columNumber - 1] = chip;
-                    break;
+                    success = true;
+                    return success;
                 }
             }
+
+            return success;
 
         }
 
