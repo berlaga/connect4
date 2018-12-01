@@ -42,10 +42,26 @@ namespace Connect4
                 else
                 {
                     Console.WriteLine(string.Format("\tSorry, column {0} is full?", column ));
-
                 }
 
                 PrintMatrix(connect4);
+
+                int result = checkWin(connect4);
+                switch(result)
+                {
+                    case 0:
+                        Console.WriteLine("Continue playing..");
+                        break;
+                    case 1:
+                        Console.WriteLine("Congratulations to RED player. You just won!!!");
+                        keepPlaying = false;
+                        break;
+                    case 2:
+                        Console.WriteLine("Congratulations to BLUE player. You just won!!!");
+                        keepPlaying = false;
+                        break;
+                }
+
             }
 
             Console.Read();
@@ -99,8 +115,61 @@ namespace Connect4
 
                 Console.WriteLine("");
 
-
             }
+        }
+
+        public static int checkWin(int[,] board)
+        {
+            int HEIGHT = board.GetLength(0);
+            int WIDTH = board.GetLength(1);
+
+            const int EMPTY_SLOT = 0;
+
+            for (int h = 0; h < HEIGHT; h++)
+            { // iterate rows, bottom to top
+
+                for (int w = 0; w < WIDTH; w++)
+                { // iterate columns, left to right
+
+                    int player = board[h,w];
+
+                    if (player == EMPTY_SLOT)
+                        continue; // don't check empty slots
+
+                    if (w + 3 < WIDTH &&
+                        player == board[h, w + 1] && // look right
+                        player == board[h, w + 2] &&
+                        player == board[h, w + 3])
+                        return player;
+
+                    if (h + 3 < HEIGHT)
+                    {
+                        if (player == board[h + 1, w] && // look up
+                            player == board[h + 2, w] &&
+                            player == board[h + 3, w])
+                        {
+                            return player;
+                        }
+
+                        if (w + 3 < WIDTH &&
+                            player == board[h + 1, w + 1] && // look up & right
+                            player == board[h + 2, w + 2] &&
+                            player == board[h + 3, w + 3])
+                        {
+                            return player;
+                        }
+
+                        if (w - 3 >= 0 &&
+                            player == board[h + 1, w - 1] && // look up & left
+                            player == board[h + 2, w - 2] &&
+                            player == board[h + 3, w - 3])
+                        {
+                            return player;
+                        }
+                    }
+                }
+            }
+            return EMPTY_SLOT; // no winner found
         }
     }
 }
